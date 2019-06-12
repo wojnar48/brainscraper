@@ -1,0 +1,4 @@
+
+        [console_scripts]
+        rotoscrape=rotoscrape:get_rotowire_data
+    
