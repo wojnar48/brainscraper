@@ -1,3 +1,8 @@
 Click
-requests
+MLB-StatsAPI
 beautifulsoup4
+ipdb
+ipython
+pandas
+requests
+selenium==3.141.0

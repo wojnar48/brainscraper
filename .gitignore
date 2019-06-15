@@ -1,3 +1,16 @@
+# python relates
 __pycache__/
 dist/
 build/
+scraper-env/
+
+# log files
+*.log
+logs.txt
+
+# Docker related
+FirefoxSetup.tar.bz2
+core
+
+# output files
+output/

@@ -7,10 +7,15 @@ setup(
     install_requires=[
         'Click',
         'requests',
-        'beautifulsoup4'
+        'beautifulsoup4',
+        'MLB-StatsAPI',
+        'ipython',
+        'ipdb',
+        'selenium==3.141.0',
+        'pandas'
     ],
     entry_points='''
         [console_scripts]
-        rotoscrape=rotoscrape:get_rotowire_data
+        rotoscrape=rotoscrape:get_stats
     ''',
 )

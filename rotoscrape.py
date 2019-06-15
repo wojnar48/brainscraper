@@ -1,15 +1,17 @@
 import click
+import sys
 import datetime
 import requests
 import re
-import sys
+import pandas as pd
+import numpy as np
 
 from bs4 import BeautifulSoup
 from requests.exceptions import HTTPError
-
 from schemas import player_schema
-from rotoparser import RotoPlayerParser
-# pip install ipython requests ipdb click enum
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
+from rotoparser import RotoProjParser
 
 # Player types
 HITTER = 'hitter'
@@ -46,34 +48,41 @@ def validate_site_type(ctx, param, value):
 @click.option('--playertype', default=f'{HITTER}', callback=validate_player_type, help=f'Select one of: {PLAYER_TYPES}')
 @click.option('--site', default=f'{DF}', callback=validate_site_type, help=f'Select one of: {SITE_TYPES}')
 @click.option('--numdays', default='1', help=f'Select number of days for data')
-@click.argument('start_date')
-def get_rotowire_data(playertype, site, start_date, numdays):
+@click.argument('start_date', type=click.DateTime())
+def get_stats(playertype, site, start_date, numdays):
     """
-    Get projected stats data from rotogrinders.com
+    Get projected MLB stats from RotoGrinders.com
     """
 
-    year, month, day = map(int, start_date.split('-'))
-    current = datetime.date(year, month, day)
     for _ in range(int(numdays)):
-        yr, m, d = current.year, current.month, current.day
-        current_str = f'{yr:04}-{m:02}-{d:02}'
-        url = f'https://rotogrinders.com/projected-stats/mlb-{playertype}?site={site}&date={current_str}'
-        click.echo(f'Fetching data from url={url}')
-        current = current + datetime.timedelta(days=1)
+        url = f"https://rotogrinders.com/projected-stats/mlb-{playertype}?site={site}&date={start_date.strftime('%Y-%m-%d')}"
+        click.echo(click.style(f'Fetching data from url={url}', fg='green'))
 
-        data_pattern = re.compile(r'data = (\[.*\]);', re.DOTALL)
-        # schedules_pattern = re.compile(r'schedules: (.*?),\n\s*', re.MULTILINE | re.DOTALL)
+        # create a new Firefox session
+        options = Options()
+        options.set_headless()
+        driver = webdriver.Firefox(options=options)
+        driver.implicitly_wait(10) # wait for html to generate
 
         try:
-            resp = requests.get(url)
-            # resp.encoding = 'utf-8'
-            player_data = parse_data(str(resp.content), data_pattern)
-            player_parser = RotoPlayerParser(playertype, current_str, player_data, player_schema)
-            player_parser.to_csv()
-        except HTTPError as http_error:
-            click.echo(f'HTTP error: {http_error}')
-            sys.exit(1)
+            driver.get(url)
         except Exception as err:
             click.echo(err)
-      
-        
+            sys.exit(1)
+
+        soup = BeautifulSoup(clean_data(driver.page_source), 'html.parser')
+        stats_table = soup.find('div', id='proj-stats')
+
+        columns = []
+
+        cols = stats_table.find_all('div', attrs={'class': 'rgt-col'})
+        for col in cols:
+            # find all children divs of rgt-col div
+            columns.append([clean_data(item.text) for item in col.find_all('div')])
+
+        features = RotoProjParser(columns, playertype, start_date.strftime('%Y-%m-%d'))
+        features.to_csv()
+
+        # increment date by 1 day
+        start_date += datetime.timedelta(days=1)
+        driver.quit() 
