@@ -59,10 +59,8 @@ WORKDIR /usr/src/app
 
 COPY . ./
 
-# Ensure start-venv.sh is executable
-RUN chmod +x start-venv.sh
-
-# Initialize python venv
-RUN ./make-venv.sh
+# Initialize python venv and install rotoscraper
+RUN python3 -m venv scraper-env
+RUN . scraper-env/bin/activate && pip install --editable .
 
 ENTRYPOINT [ '/bin/bash' ]
