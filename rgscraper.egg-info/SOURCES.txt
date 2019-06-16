@@ -1,0 +1,8 @@
+README.md
+rgscraper.py
+rgscraper.egg-info/PKG-INFO
+rgscraper.egg-info/SOURCES.txt
+rgscraper.egg-info/dependency_links.txt
+rgscraper.egg-info/entry_points.txt
+rgscraper.egg-info/requires.txt
+rgscraper.egg-info/top_level.txt

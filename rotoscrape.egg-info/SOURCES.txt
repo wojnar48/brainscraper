@@ -1,9 +1,0 @@
-README.md
-rotoscrape.py
-setup.py
-rotoscrape.egg-info/PKG-INFO
-rotoscrape.egg-info/SOURCES.txt
-rotoscrape.egg-info/dependency_links.txt
-rotoscrape.egg-info/entry_points.txt
-rotoscrape.egg-info/requires.txt
-rotoscrape.egg-info/top_level.txt

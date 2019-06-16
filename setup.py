@@ -1,9 +1,14 @@
 from setuptools import setup
 
 setup(
-    name='rotoscrape',
+    name='rgscraper',
     version='0.1',
-    py_modules=['rotoscrape'],
+    py_modules=[
+        'configs',
+        'rgscraper',
+        'parsers',
+        'transformers'
+    ],
     install_requires=[
         'Click',
         'requests',
@@ -16,6 +21,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        rotoscrape=rotoscrape:get_stats
+        rgscraper=rgscraper:get_proj_stats
     ''',
 )

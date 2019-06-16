@@ -1,0 +1,4 @@
+
+        [console_scripts]
+        rgscraper=rgscraper:get_proj_stats
+    

@@ -63,4 +63,3 @@ COPY . ./
 RUN python3 -m venv scraper-env
 RUN . scraper-env/bin/activate && pip install --editable .
 
-ENTRYPOINT [ '/bin/bash' ]
